@@ -448,12 +448,14 @@ export default function App() {
             fullScript: fullScriptText,
             hostVoice,
             collectorVoice,
+            style: activeScript?.style,
           }
         : {
             hostText,
             hostVoice,
             collectorText,
             collectorVoice,
+            style: activeScript?.style,
           };
 
 
