@@ -103,7 +103,15 @@ export default function App() {
 
   // Apply script preset (المستخدم حر باختيار صوت المذيع والمحصّل في كل الأوضاع)
   const handleApplyPreset = (script: PodcastScript) => {
-    if (script.id !== "full_episode") {
+    if (script.fullScript) {
+      setFullScriptText(script.fullScript);
+      // استخرج نصوص المذيع والمحصّل من النص الكامل لعرضها في الخانتين
+      const turns = parseFullScript(script.fullScript);
+      const hostLines = turns.filter((t) => t.role === "host").map((t) => t.text).join("\n\n");
+      const collectorLines = turns.filter((t) => t.role === "collector").map((t) => t.text).join("\n\n");
+      setHostText(hostLines || script.hostText || "");
+      setCollectorText(collectorLines || script.collectorText || "");
+    } else {
       setHostText(script.hostText);
       setCollectorText(script.collectorText);
     }
