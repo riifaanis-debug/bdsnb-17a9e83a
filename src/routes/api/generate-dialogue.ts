@@ -245,7 +245,12 @@ function silence(seconds = 0.35, sampleRate = 24000) {
   return Buffer.alloc(Math.round(sampleRate * seconds) * 2);
 }
 
-async function generateDialoguePcm(turns: DialogueTurn[], hostVoice: string, collectorVoice: string) {
+async function generateDialoguePcm(
+  turns: DialogueTurn[],
+  hostVoice: string,
+  collectorVoice: string,
+  style?: "saudi_colloquial" | "formal_fusha",
+) {
   const jobs: { text: string; voice: string; role: SpeakerRole }[] = [];
   for (const turn of turns) {
     const voice = turn.role === "host" ? hostVoice : collectorVoice;
@@ -255,7 +260,7 @@ async function generateDialoguePcm(turns: DialogueTurn[], hostVoice: string, col
   }
 
   const results = await Promise.all(
-    jobs.map((j) => synthesizeSpeechPcm({ text: j.text, voice: j.voice, role: j.role })),
+    jobs.map((j) => synthesizeSpeechPcm({ text: j.text, voice: j.voice, role: j.role, style })),
   );
 
   const buffers: Buffer[] = [];
