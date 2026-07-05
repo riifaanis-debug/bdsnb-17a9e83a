@@ -5,7 +5,9 @@ export interface PodcastScript {
   hostText: string;
   collectorText: string;
   fullScript?: string;
+  style?: "saudi_colloquial" | "formal_fusha";
 }
+
 
 export interface VoiceOption {
   value: string;
