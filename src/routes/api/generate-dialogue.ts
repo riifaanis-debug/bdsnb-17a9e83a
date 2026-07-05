@@ -276,8 +276,10 @@ export const Route = createFileRoute("/api/generate-dialogue")({
     handlers: {
       POST: async ({ request }) => {
         try {
-          const { hostText, hostVoice, collectorText, collectorVoice, fullScript } =
+          const { hostText, hostVoice, collectorText, collectorVoice, fullScript, style } =
             await request.json();
+          const styleValue: "saudi_colloquial" | "formal_fusha" =
+            style === "formal_fusha" ? "formal_fusha" : "saudi_colloquial";
 
           if (
             !fullScript &&
