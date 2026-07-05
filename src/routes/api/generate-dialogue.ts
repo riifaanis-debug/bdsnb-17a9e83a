@@ -228,16 +228,23 @@ function silence(seconds = 0.35, sampleRate = 24000) {
 }
 
 async function generateDialoguePcm(turns: DialogueTurn[], hostVoice: string, collectorVoice: string) {
-  const buffers: Buffer[] = [];
-
+  const jobs: { text: string; voice: string; role: SpeakerRole }[] = [];
   for (const turn of turns) {
     const voice = turn.role === "host" ? hostVoice : collectorVoice;
     for (const text of splitLongText(turn.text)) {
-      buffers.push(await synthesizeSpeechPcm({ text, voice, role: turn.role }));
-      buffers.push(silence());
+      jobs.push({ text, voice, role: turn.role });
     }
   }
 
+  const results = await Promise.all(
+    jobs.map((j) => synthesizeSpeechPcm({ text: j.text, voice: j.voice, role: j.role })),
+  );
+
+  const buffers: Buffer[] = [];
+  const gap = silence();
+  for (const pcm of results) {
+    buffers.push(pcm, gap);
+  }
   return Buffer.concat(buffers);
 }
 
