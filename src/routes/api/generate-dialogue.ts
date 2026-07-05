@@ -159,7 +159,7 @@ async function synthesizeSpeechPcm(params: {
       model: "openai/gpt-4o-mini-tts",
       input: params.text,
       voice: mapVoice(params.voice),
-      instructions: getInstructions(params.role),
+      instructions: getInstructions(params.role, params.style),
       response_format: "pcm",
     }),
   });
