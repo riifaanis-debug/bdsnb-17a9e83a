@@ -140,6 +140,7 @@ async function synthesizeSpeechPcm(params: {
   text: string;
   voice?: string;
   role: SpeakerRole;
+  style?: "saudi_colloquial" | "formal_fusha";
 }): Promise<Buffer> {
   const key = process.env.LOVABLE_API_KEY;
   if (!key) {
