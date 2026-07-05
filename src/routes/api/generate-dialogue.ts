@@ -80,7 +80,24 @@ function extractGatewayMessage(raw: string) {
   }
 }
 
-function getInstructions(role: SpeakerRole) {
+function getInstructions(role: SpeakerRole, style: "saudi_colloquial" | "formal_fusha" = "saudi_colloquial") {
+  if (style === "formal_fusha") {
+    return `أدِّ النص التالي بأسلوب إعلان جامعي رسمي، بصوت فصيح وواضح، ونبرة وقورة وهادئة، كما لو كان الإعلان يُلقى في قاعة أكاديمية أثناء مناقشة رسالة علمية.
+
+- الإلقاء بالكامل باللغة العربية الفصحى، دون أي لهجة عامية.
+- إلقاء رسمي مهيب، بوضوح كامل في مخارج الحروف، وتوازن في السرعة، دون استعجال أو مبالغة في الانفعال.
+- التزم بالوقفات المضمّنة في النص:
+  [وقفة قصيرة] = توقف خفيف.
+  [وقفة متوسطة] = توقف أوضح قبل الانتقال للفكرة التالية.
+  [وقفة طويلة] = توقف رسمي لإبراز أهمية الجملة أو القرار.
+  لا تنطق كلمة "وقفة" ولا الأقواس، بل التزم صمتاً بمقدارها.
+- عند قراءة الأسماء والدرجات العلمية اجعل النبرة أكثر احتراماً ورسمية.
+- عند إعلان النتيجة النهائية ارفع الوقار في الصوت قليلاً، وامنح عبارة "ممتاز مع مرتبة الشرف الأولى" إبرازاً واضحاً ومؤثراً.
+- يجب أن يكون الأداء إلقاءً احتفالياً رصيناً داخل جامعة، لا قراءة خبر عادي ولا إعلاناً تجارياً.
+
+انطق النص كما هو حرفياً دون أي مقدمات أو أسماء متحدثين، ودون حذف أو اختصار أو إضافة.`;
+  }
+
   const roleLine =
     role === "host"
       ? "أنت المذيع فقط. تحدث كمذيع بودكاست سعودي عفوي ومثقف، بصوت واثق وترحيبي."
@@ -123,6 +140,7 @@ async function synthesizeSpeechPcm(params: {
   text: string;
   voice?: string;
   role: SpeakerRole;
+  style?: "saudi_colloquial" | "formal_fusha";
 }): Promise<Buffer> {
   const key = process.env.LOVABLE_API_KEY;
   if (!key) {
@@ -141,7 +159,7 @@ async function synthesizeSpeechPcm(params: {
       model: "openai/gpt-4o-mini-tts",
       input: params.text,
       voice: mapVoice(params.voice),
-      instructions: getInstructions(params.role),
+      instructions: getInstructions(params.role, params.style),
       response_format: "pcm",
     }),
   });
@@ -227,7 +245,12 @@ function silence(seconds = 0.35, sampleRate = 24000) {
   return Buffer.alloc(Math.round(sampleRate * seconds) * 2);
 }
 
-async function generateDialoguePcm(turns: DialogueTurn[], hostVoice: string, collectorVoice: string) {
+async function generateDialoguePcm(
+  turns: DialogueTurn[],
+  hostVoice: string,
+  collectorVoice: string,
+  style?: "saudi_colloquial" | "formal_fusha",
+) {
   const jobs: { text: string; voice: string; role: SpeakerRole }[] = [];
   for (const turn of turns) {
     const voice = turn.role === "host" ? hostVoice : collectorVoice;
@@ -237,7 +260,7 @@ async function generateDialoguePcm(turns: DialogueTurn[], hostVoice: string, col
   }
 
   const results = await Promise.all(
-    jobs.map((j) => synthesizeSpeechPcm({ text: j.text, voice: j.voice, role: j.role })),
+    jobs.map((j) => synthesizeSpeechPcm({ text: j.text, voice: j.voice, role: j.role, style })),
   );
 
   const buffers: Buffer[] = [];
@@ -253,8 +276,10 @@ export const Route = createFileRoute("/api/generate-dialogue")({
     handlers: {
       POST: async ({ request }) => {
         try {
-          const { hostText, hostVoice, collectorText, collectorVoice, fullScript } =
+          const { hostText, hostVoice, collectorText, collectorVoice, fullScript, style } =
             await request.json();
+          const styleValue: "saudi_colloquial" | "formal_fusha" =
+            style === "formal_fusha" ? "formal_fusha" : "saudi_colloquial";
 
           if (
             !fullScript &&
@@ -279,7 +304,7 @@ export const Route = createFileRoute("/api/generate-dialogue")({
                 { status: 400 },
               );
             }
-            combined = await generateDialoguePcm(turns, hv, cv);
+            combined = await generateDialoguePcm(turns, hv, cv, styleValue);
           } else {
             combined = await generateDialoguePcm(
               [
@@ -288,6 +313,7 @@ export const Route = createFileRoute("/api/generate-dialogue")({
               ],
               hv,
               cv,
+              styleValue,
             );
           }
 
