@@ -304,7 +304,7 @@ export const Route = createFileRoute("/api/generate-dialogue")({
                 { status: 400 },
               );
             }
-            combined = await generateDialoguePcm(turns, hv, cv);
+            combined = await generateDialoguePcm(turns, hv, cv, styleValue);
           } else {
             combined = await generateDialoguePcm(
               [
@@ -313,6 +313,7 @@ export const Route = createFileRoute("/api/generate-dialogue")({
               ],
               hv,
               cv,
+              styleValue,
             );
           }
 
