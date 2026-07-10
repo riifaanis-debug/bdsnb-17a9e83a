@@ -910,7 +910,7 @@ export default function App() {
         )}
 
         {/* Conditional Layouts based on Preset Mode */}
-        {activePreset === "full_episode" ? (
+        {SAMPLE_SCRIPTS.find(s => s.id === activePreset)?.fullScript ? (
           <div className="w-full bg-slate-900/40 border border-slate-800 rounded-2xl p-3 sm:p-6 flex flex-col shadow-lg relative min-h-[400px] sm:min-h-[500px]" id="full-episode-view">
 
             {/* Full Episode Header */}
