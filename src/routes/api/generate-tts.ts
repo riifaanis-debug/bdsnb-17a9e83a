@@ -146,6 +146,7 @@ ${roleLine}
           const pcm = await synthesizeSpeechPcm({
             text: String(text),
             voice,
+            role,
             instructions: promptPrefix,
           });
           const wav = encodeWav(pcm);
