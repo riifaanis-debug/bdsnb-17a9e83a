@@ -9,13 +9,13 @@ export default function App() {
   const [hostText, setHostText] = useState(SAMPLE_SCRIPTS[1].hostText);
   const [collectorText, setCollectorText] = useState(SAMPLE_SCRIPTS[1].collectorText);
   
-  // Voice selection states
+  // Voice selection states (fixed defaults, no user selection)
   const [hostVoice, setHostVoice] = useState("Charon");
-  const [collectorVoice, setCollectorVoice] = useState("Fenrir");
-  
+  const [collectorVoice, setCollectorVoice] = useState("Achird");
+
   // Playback and UI state
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [audioName, setAudioName] = useState<string>("حلقة_بودكاست_القطاع.mp3");
+  const [audioName, setAudioName] = useState<string>("حلقة_بودكاست_القطاع.wav");
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
@@ -232,7 +232,7 @@ export default function App() {
       stopLocalSpeaking();
       
       setAudioUrl(url);
-      const fname = `${role === "host" ? "مذيع" : "محصل"}_بودكاست_${Date.now()}.mp3`;
+      const fname = `${role === "host" ? "مذيع" : "محصل"}_بودكاست_${Date.now()}.wav`;
       setAudioName(fname);
       setIsPlaying(false);
 
@@ -329,10 +329,10 @@ export default function App() {
     try {
       let audio_path: string | null = null;
       if (params.audioBlob) {
-        const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.mp3`;
+        const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.wav`;
         const { error: upErr } = await supabase.storage
           .from("generated-audio")
-          .upload(path, params.audioBlob, { contentType: "audio/mpeg", upsert: false });
+          .upload(path, params.audioBlob, { contentType: "audio/wav", upsert: false });
         if (!upErr) audio_path = path;
         else console.warn("Audio upload failed:", upErr.message);
       }
@@ -367,7 +367,7 @@ export default function App() {
     stopLocalSpeaking();
     if (signedUrl) {
       setAudioUrl(signedUrl);
-      setAudioName(f.name.endsWith(".mp3") ? f.name : `${f.name}.mp3`);
+      setAudioName(f.name.match(/\.(wav|mp3|ogg)$/i) ? f.name : `${f.name}.wav`);
       setIsPlaying(false);
       setTimeout(() => {
         if (audioRef.current) {
@@ -500,7 +500,7 @@ export default function App() {
       stopLocalSpeaking();
       
       setAudioUrl(url);
-      const fname = isFullScript ? `الحلقة_الكاملة_بودكاست_القطاع_${Date.now()}.mp3` : `حلقة_بودكاست_كاملة_${Date.now()}.mp3`;
+      const fname = isFullScript ? `الحلقة_الكاملة_بودكاست_القطاع_${Date.now()}.wav` : `حلقة_بودكاست_كاملة_${Date.now()}.wav`;
       setAudioName(fname);
       setIsPlaying(false);
 
@@ -1264,10 +1264,10 @@ export default function App() {
                     href={audioUrl}
                     download={audioName}
                     className="text-indigo-400 hover:text-indigo-300 text-[11px] sm:text-xs flex items-center gap-1 font-bold cursor-pointer"
-                    title="تحميل الملف الصوتي بصيغة MP3"
+                    title="تحميل الملف الصوتي بصيغة WAV"
                   >
                     <Download className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                    <span>تحميل MP3</span>
+                    <span>تحميل WAV</span>
                   </a>
                 ) : (
                   <span className="text-[10px] text-slate-500 cursor-not-allowed flex items-center gap-1" title="التحميل متاح في الوضع السحابي فقط">

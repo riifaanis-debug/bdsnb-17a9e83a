@@ -19,57 +19,30 @@ function encodeWav(pcm: Buffer, sampleRate = 24000): Buffer {
   return buffer;
 }
 
+function decodeWavPcm(wav: Buffer): { pcm: Buffer; sampleRate: number } {
+  let offset = 12;
+  let sampleRate = 24000;
+  while (offset < wav.length) {
+    const chunkId = wav.toString("ascii", offset, offset + 4);
+    const chunkSize = wav.readUInt32LE(offset + 4);
+    if (chunkId === "fmt ") {
+      sampleRate = wav.readUInt32LE(offset + 12);
+    } else if (chunkId === "data") {
+      return {
+        pcm: wav.subarray(offset + 8, offset + 8 + chunkSize),
+        sampleRate,
+      };
+    }
+    offset += 8 + chunkSize + (chunkSize % 2);
+  }
+  throw new Error("Invalid WAV: data chunk not found");
+}
+
 type SpeakerRole = "host" | "collector";
 type DialogueTurn = { role: SpeakerRole; text: string };
-type OpenAiVoice =
-  | "alloy"
-  | "ash"
-  | "ballad"
-  | "coral"
-  | "echo"
-  | "fable"
-  | "nova"
-  | "onyx"
-  | "sage"
-  | "shimmer"
-  | "verse";
 
-const VOICE_MAP: Record<string, OpenAiVoice> = {
-  Charon: "onyx",
-  Fenrir: "ash",
-  Kore: "echo",
-  Zephyr: "alloy",
-  Orus: "onyx",
-  Enceladus: "fable",
-  Iapetus: "echo",
-  Umbriel: "sage",
-  Algieba: "verse",
-  Algenib: "onyx",
-  Rasalgethi: "ash",
-  Achernar: "alloy",
-  Alnilam: "echo",
-  Schedar: "sage",
-  Gacrux: "onyx",
-  Achird: "verse",
-  Zubenelgenubi: "alloy",
-  Sadachbia: "fable",
-  Sadaltager: "ash",
-  Puck: "nova",
-  Leda: "shimmer",
-  Aoede: "coral",
-  Callirrhoe: "sage",
-  Autonoe: "verse",
-  Despina: "shimmer",
-  Erinome: "coral",
-  Laomedeia: "nova",
-  Pulcherrima: "coral",
-  Vindemiatrix: "sage",
-  Sulafat: "shimmer",
-};
-
-function mapVoice(voice?: string): OpenAiVoice {
-  return (voice && VOICE_MAP[voice]) || "alloy";
-}
+const GEMINI_TTS_MODEL = "google/gemini-3.1-flash-tts-preview";
+const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/audio/speech";
 
 function extractGatewayMessage(raw: string) {
   try {
@@ -80,82 +53,72 @@ function extractGatewayMessage(raw: string) {
   }
 }
 
-function getInstructions(role: SpeakerRole, style: "saudi_colloquial" | "formal_fusha" = "saudi_colloquial") {
+function getPrompt(
+  role: SpeakerRole,
+  text: string,
+  style: "saudi_colloquial" | "formal_fusha" = "saudi_colloquial",
+) {
   if (style === "formal_fusha") {
-    return `أدِّ النص التالي بأسلوب إعلان جامعي رسمي حيّ وشيّق، بصوت فصيح واضح ومهيب، يشدّ انتباه السامع من أول جملة إلى آخرها.
+    return `أدِ النص التالي بأسلوب إعلان جامعي رسمي حيّ ومهيب باللغة العربية الفصحى. لا تضف أي مقدمة أو تعليق. التزم بالوقفات المكتوبة [وقفة ...] كصمت فقط دون نطق كلمة "وقفة". انطق النص كما هو حرفياً.
 
-- الإلقاء بالكامل باللغة العربية الفصحى، دون أي لهجة عامية.
-- الإيقاع نشيط ومتوسط السرعة (لا بطيء ولا مسرِع)، بحيث يشعر السامع بالحيوية والحضور لا بالرتابة.
-- نوّع النبرات بوضوح من جملة لأخرى: نبرة تقديم واثقة في الافتتاح، نبرة سرد هادئة في الوصف، نبرة تشويق ترتفع قبل إعلان النتيجة، ونبرة تفخيم وإعجاب عند ذكر التقدير.
-- غيّر حدّة الصوت (Pitch) وارتفاع الصوت (Volume) بشكل طبيعي بين الجمل: اخفض قليلاً في الجُمل الاعتراضية والتفصيلية، وارفع الصوت والحدّة في الجُمل المحورية والقرارات وأسماء الأشخاص والدرجات العلمية.
-- شدّد على الكلمات المفتاحية (الجمعية، الرسالة، اللجنة، القرار، القبول، التقدير)، وامنح كل اسم علم وقاراً واضحاً في النطق.
-- التزم بالوقفات المضمّنة في النص:
-  [وقفة قصيرة] = توقف خفيف.
-  [وقفة متوسطة] = توقف أوضح قبل الانتقال للفكرة التالية.
-  [وقفة طويلة] = توقف رسمي لإبراز أهمية الجملة أو القرار.
-  لا تنطق كلمة "وقفة" ولا الأقواس، بل التزم صمتاً بمقدارها فقط ثم أكمل مباشرة.
-- عند إعلان النتيجة النهائية ارفع الصوت والحدّة قليلاً وأبطئ النطق شيئاً يسيراً، وامنح عبارة "ممتاز، مع مرتبة الشرف الأولى" إبرازاً واضحاً ومؤثراً كأنها ذروة الإعلان.
-- الأداء إلقاء احتفالي رصين حيّ، لا قراءة خبر عادي ولا إعلان تجاري ولا صوت آلي رتيب.
-
-انطق النص كما هو حرفياً دون أي مقدمات أو أسماء متحدثين، ودون حذف أو اختصار أو إضافة.`;
+${text}`;
   }
 
-  const roleLine =
-    role === "host"
-      ? "أنت المذيع: رجل سعودي ناضج بصوت طبيعي هادئ وواثق، تتكلم بلهجة سعودية عامية بسيطة كأنك في مكالمة هاتفية حقيقية مع صاحبك. ابدأ بنطق كلمة «المذيع» بشكل طبيعي وسريع ثم أكمل."
-      : `أنت المحصّل: شاب سعودي في العشرينات من عمرك، صوتك شبابي طبيعي وواضح، تتكلم بلهجة سعودية عامية بسيطة 100٪ كأنك تكلم صاحبك قدّامك وجهاً لوجه، مو قارئ نص ولا سارد قصة.
+  if (role === "host") {
+    return `Read the following transcript aloud in natural Saudi colloquial Arabic. You are the host (المذيع): a mature Saudi man with a calm, natural male voice. Pronounce the speaker label clearly at the start, then continue naturally. Do not add any introduction, commentary, or extra words. Keep the rhythm of a real phone call.
 
-- خلي أداءك واقعي وعفوي: تكلم بسرعة الشارع السعودي، بكلمات يومية بسيطة، وخلي فيه ثقة وتحدي واضحين.
-- نوّع نبراتك حسب معنى الجملة: نبرة جدية حازمة، نبرة غاضبة، نبرة تهديد وضغط، نبرة مرتفعة وحاسمة في المواقف القوية، ونبرة أهدأ وأخفض عند ذكر التفاصيل والمعلومات.
-- ارفع الصوت وحدّته في الجُمل اللي فيها تحذير أو تهديد أو قسم أو تأكيد قوي، وشدّد على كلمات مثل: «أُقسم بالله»، «والله العظيم»، «التوقيف»، «القبض»، «السجن»، «الترحيل»، «قرارك»، «صادق معاي»، «لا تلف ولا تدور».
-- اخفض الصوت شوي وخلي النبرة أهدأ وأبطأ قليلاً عند سرد التفاصيل (الشرطة، البنك، الجوازات، رقم المعاملة، البيانات) بحيث يحسّها السامع معلومة مؤكدة ومخيفة، ثم ارفعها مرة ثانية عند الجملة الحاسمة اللي بعدها.
-- استخدم وقفات قصيرة حادة (نص ثانية إلى ثانية) قبل الجُمل المفصلية وبعد الكلمات المفتاحية عشان تشدّ انتباه السامع.
-- خذ نفس مسموع وعفوي بين المقاطع الطويلة، وبالأخص قبل جمل التهديد والقسم، كأنك تلتقط أنفاسك من الضغط والانفعال.
-- اقطع بعض الجمل في نصّها بوقفة قصيرة (كأنك تفكر أو تختار كلماتك بحذر) ثم أكمل بنبرة أقوى وأحدّ.
-- بين الجملة والثانية في مقاطع التهديد، خلّ فيه سكتة قصيرة محسوسة تعطي إحساس المواجهة المباشرة وجهاً لوجه، مو تسلسل قراءة.
-- خلي فيها انفعال حقيقي: غضب مكتوم، ضغط، تحدي، جدية شديدة — بدون صراخ هستيري وبدون أداء مسرحي مبالغ فيه.
-- ابدأ بنطق كلمة «المحصّل» بشكل طبيعي وسريع ثم ادخل مباشرة بالنبرة الحازمة.`;
+Transcript:\n${text}`;
+  }
 
+  return `Read the following transcript aloud in natural Saudi colloquial Arabic. You are the collector (المحصّل): a young Saudi man in his twenties with a confident, street-level Saudi voice. Vary your tone: raise pitch and volume for warnings, threats, oaths and strong statements; lower for details; add short sharp pauses and natural breaths where needed. Pronounce the speaker label clearly at the start, then continue naturally. Do not add any introduction, commentary, or extra words.
 
-  return `🚨 إلزامي: تكلّم باللهجة السعودية العامية البسيطة 100٪ من أول كلمة لآخر كلمة، كأنها مكالمة هاتفية طبيعية بين شخصين.
-
-- ممنوع منعاً باتاً أي نطق فصيح أو أي لهجة غير سعودية، ولو في حرف واحد. أي كلمة فصيحة حوّلها فوراً لمقابلها العامي السعودي بنفس المعنى.
-- ممنوع النبرة الرسمية أو الخطابية أو المسرحية أو الإعلانية أو الصوت الآلي.
-- الإيقاع والسرعة طبيعيان تماماً كإيقاع المكالمة الهاتفية الحقيقية: لا بطيء ولا مسرِع، بدون مطّ في الحروف ولا صمت طويل.
-- وقفات قصيرة وطبيعية بين الجمل فقط، مع تنفس عفوي.
-- انطق الأسماء والكلمات بدقة كما وردت، بدون حذف أو اختصار أو إضافة.
-- إذا خرجت أي كلمة بلهجة فصيحة أو غير سعودية، أعد نطقها فوراً بالعامية السعودية الصحيحة.
-
-${roleLine}
-انطق النص التالي كما هو مباشرة، بلهجة سعودية عامية طبيعية وإيقاع مكالمة هاتفية:`;
+Transcript:\n${text}`;
 }
 
-async function synthesizeSpeechPcm(params: {
+async function synthesizeSpeechWav(params: {
   text: string;
-  voice?: string;
+  voiceName: string;
   role: SpeakerRole;
   style?: "saudi_colloquial" | "formal_fusha";
 }): Promise<Buffer> {
   const key = process.env.LOVABLE_API_KEY;
   if (!key) {
-    const error = new Error("مفتاح Lovable AI غير مهيأ في المشروع.") as Error & { status?: number };
+    const error = new Error("مفتاح Lovable AI غير مهيأ في المشروع.") as Error & {
+      status?: number;
+    };
     error.status = 500;
     throw error;
   }
 
-  const response = await fetch("https://ai.gateway.lovable.dev/v1/audio/speech", {
+  const response = await fetch(GATEWAY_URL, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${key}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "openai/gpt-4o-mini-tts",
-      input: params.text,
-      // الأصوات ثابتة إلزامياً: المذيع رجالي ناضج (onyx)، والمحصّل شاب سعودي في العشرينات (sage)
-      voice: params.role === "host" ? "onyx" : "sage",
-      instructions: getInstructions(params.role, params.style),
-      response_format: "pcm",
+      model: GEMINI_TTS_MODEL,
+      stream_format: "audio",
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: getPrompt(params.role, params.text, params.style),
+            },
+          ],
+        },
+      ],
+      generationConfig: {
+        responseModalities: ["AUDIO"],
+        speechConfig: {
+          voiceConfig: {
+            prebuiltVoiceConfig: {
+              voiceName: params.voiceName,
+            },
+          },
+        },
+      },
     }),
   });
 
@@ -205,7 +168,7 @@ function parseFullScript(fullScript: string): DialogueTurn[] {
   return turns;
 }
 
-function splitLongText(text: string, maxLength = 1600) {
+function splitLongText(text: string, maxLength = 3000) {
   if (text.length <= maxLength) return [text];
 
   const pieces = text
@@ -240,32 +203,53 @@ function silence(seconds = 0.35, sampleRate = 24000) {
   return Buffer.alloc(Math.round(sampleRate * seconds) * 2);
 }
 
-async function generateDialoguePcm(
+async function generateDialogueAudio(
   turns: DialogueTurn[],
   hostVoice: string,
   collectorVoice: string,
   style?: "saudi_colloquial" | "formal_fusha",
 ) {
-  const jobs: { text: string; voice: string; role: SpeakerRole }[] = [];
+  type Job = { text: string; voiceName: string; role: SpeakerRole };
+  const jobs: Job[] = [];
+
   for (const turn of turns) {
-    const voice = turn.role === "host" ? hostVoice : collectorVoice;
+    const voiceName = turn.role === "host" ? hostVoice : collectorVoice;
     const label = turn.role === "host" ? "المذيع: " : "المحصّل: ";
     const chunks = splitLongText(turn.text);
     chunks.forEach((text, i) => {
-      jobs.push({ text: i === 0 ? `${label}${text}` : text, voice, role: turn.role });
+      jobs.push({ text: i === 0 ? `${label}${text}` : text, voiceName, role: turn.role });
     });
   }
 
-  const results = await Promise.all(
-    jobs.map((j) => synthesizeSpeechPcm({ text: j.text, voice: j.voice, role: j.role, style })),
-  );
-
-  const buffers: Buffer[] = [];
-  const gap = silence();
-  for (const pcm of results) {
-    buffers.push(pcm, gap);
+  // Run with limited concurrency to avoid gateway rate limits.
+  const concurrency = 5;
+  const wavs: Buffer[] = [];
+  for (let i = 0; i < jobs.length; i += concurrency) {
+    const batch = jobs.slice(i, i + concurrency);
+    const batchWavs = await Promise.all(
+      batch.map((j) =>
+        synthesizeSpeechWav({
+          text: j.text,
+          voiceName: j.voiceName,
+          role: j.role,
+          style,
+        }),
+      ),
+    );
+    wavs.push(...batchWavs);
   }
-  return Buffer.concat(buffers);
+
+  const first = decodeWavPcm(wavs[0]);
+  const sampleRate = first.sampleRate;
+  const gap = silence(0.35, sampleRate);
+  const pcmBuffers: Buffer[] = [];
+
+  for (const wav of wavs) {
+    const { pcm } = decodeWavPcm(wav);
+    pcmBuffers.push(pcm, gap);
+  }
+
+  return encodeWav(Buffer.concat(pcmBuffers), sampleRate);
 }
 
 export const Route = createFileRoute("/api/generate-dialogue")({
@@ -289,7 +273,7 @@ export const Route = createFileRoute("/api/generate-dialogue")({
           }
 
           const hv = hostVoice || "Charon";
-          const cv = collectorVoice || "Fenrir";
+          const cv = collectorVoice || "Achird";
 
           let combined: Buffer;
 
@@ -301,9 +285,9 @@ export const Route = createFileRoute("/api/generate-dialogue")({
                 { status: 400 },
               );
             }
-            combined = await generateDialoguePcm(turns, hv, cv, styleValue);
+            combined = await generateDialogueAudio(turns, hv, cv, styleValue);
           } else {
-            combined = await generateDialoguePcm(
+            combined = await generateDialogueAudio(
               [
                 { role: "host", text: String(hostText) },
                 { role: "collector", text: String(collectorText) },
@@ -314,8 +298,7 @@ export const Route = createFileRoute("/api/generate-dialogue")({
             );
           }
 
-          const wav = encodeWav(combined);
-          return new Response(new Uint8Array(wav), {
+          return new Response(new Uint8Array(combined), {
             headers: { "Content-Type": "audio/wav" },
           });
         } catch (error: any) {
