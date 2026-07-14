@@ -237,9 +237,11 @@ async function generateDialoguePcm(
   const jobs: { text: string; voice: string; role: SpeakerRole }[] = [];
   for (const turn of turns) {
     const voice = turn.role === "host" ? hostVoice : collectorVoice;
-    for (const text of splitLongText(turn.text)) {
-      jobs.push({ text, voice, role: turn.role });
-    }
+    const label = turn.role === "host" ? "المذيع: " : "المحصّل: ";
+    const chunks = splitLongText(turn.text);
+    chunks.forEach((text, i) => {
+      jobs.push({ text: i === 0 ? `${label}${text}` : text, voice, role: turn.role });
+    });
   }
 
   const results = await Promise.all(
