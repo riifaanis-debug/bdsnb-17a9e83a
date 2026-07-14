@@ -81,6 +81,7 @@ function extractGatewayMessage(raw: string) {
 async function synthesizeSpeechPcm(params: {
   text: string;
   voice?: string;
+  role?: string;
   instructions: string;
 }): Promise<Buffer> {
   const key = process.env.LOVABLE_API_KEY;
@@ -99,7 +100,8 @@ async function synthesizeSpeechPcm(params: {
     body: JSON.stringify({
       model: "openai/gpt-4o-mini-tts",
       input: params.text,
-      voice: mapVoice(params.voice),
+      // الأصوات ثابتة: المذيع رجالي ناضج، والمحصّل شاب سعودي في العشرينات
+      voice: (params as any).role === "collector" ? "ash" : "onyx",
       instructions: params.instructions,
       response_format: "pcm",
     }),
@@ -144,6 +146,7 @@ ${roleLine}
           const pcm = await synthesizeSpeechPcm({
             text: String(text),
             voice,
+            role,
             instructions: promptPrefix,
           });
           const wav = encodeWav(pcm);
