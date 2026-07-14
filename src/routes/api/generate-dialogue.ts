@@ -58,6 +58,8 @@ function getPrompt(
   text: string,
   style: "saudi_colloquial" | "formal_fusha" = "saudi_colloquial",
 ) {
+  const qafRule = `\n\nCRITICAL PRONUNCIATION RULE (MANDATORY): Pronounce every Arabic letter ق (qaf) as the Saudi colloquial hard "g" sound (like گ / English "g" in "go"), NEVER as the classical Fusha qaf. Examples: قال→gaal, قلت→gult, وقت→wagt, حقك→haggak, صدق→sidg, فوق→foog, تحقيق→tahgeeg, وثيقة→watheega, حقوق→hgoog, قانوني→gaanooni. Apply this to EVERY word containing ق without exception. Any classical qaf pronunciation is a production error. Keep all other letters in their natural Saudi colloquial form.`;
+
   if (style === "formal_fusha") {
     return `أدِ النص التالي بأسلوب إعلان جامعي رسمي حيّ ومهيب باللغة العربية الفصحى. لا تضف أي مقدمة أو تعليق. التزم بالوقفات المكتوبة [وقفة ...] كصمت فقط دون نطق كلمة "وقفة". انطق النص كما هو حرفياً.
 
@@ -65,12 +67,12 @@ ${text}`;
   }
 
   if (role === "host") {
-    return `Read the following transcript aloud in natural Saudi colloquial Arabic. You are the host (المذيع): a mature Saudi man with a calm, natural male voice. Pronounce the speaker label clearly at the start, then continue naturally. Do not add any introduction, commentary, or extra words. Keep the rhythm of a real phone call.
+    return `Read the following transcript aloud in natural Saudi colloquial Arabic. You are the host (المذيع): a mature Saudi man with a calm, natural male voice. Pronounce the speaker label clearly at the start, then continue naturally. Do not add any introduction, commentary, or extra words. Keep the rhythm of a real phone call.${qafRule}
 
 Transcript:\n${text}`;
   }
 
-  return `Read the following transcript aloud in natural Saudi colloquial Arabic. You are the collector (المحصّل): a young Saudi man in his twenties with a confident, street-level Saudi voice. Vary your tone: raise pitch and volume for warnings, threats, oaths and strong statements; lower for details; add short sharp pauses and natural breaths where needed. Pronounce the speaker label clearly at the start, then continue naturally. Do not add any introduction, commentary, or extra words.
+  return `Read the following transcript aloud in natural Saudi colloquial Arabic. You are the collector (المحصّل): a young Saudi man in his twenties with a confident, street-level Saudi voice. Vary your tone: raise pitch and volume for warnings, threats, oaths and strong statements; lower for details; add short sharp pauses and natural breaths where needed. Pronounce the speaker label clearly at the start, then continue naturally. Do not add any introduction, commentary, or extra words.${qafRule}
 
 Transcript:\n${text}`;
 }
