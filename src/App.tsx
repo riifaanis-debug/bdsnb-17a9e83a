@@ -1264,10 +1264,10 @@ export default function App() {
                     href={audioUrl}
                     download={audioName}
                     className="text-indigo-400 hover:text-indigo-300 text-[11px] sm:text-xs flex items-center gap-1 font-bold cursor-pointer"
-                    title="تحميل الملف الصوتي بصيغة MP3"
+                    title="تحميل الملف الصوتي بصيغة WAV"
                   >
                     <Download className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                    <span>تحميل MP3</span>
+                    <span>تحميل WAV</span>
                   </a>
                 ) : (
                   <span className="text-[10px] text-slate-500 cursor-not-allowed flex items-center gap-1" title="التحميل متاح في الوضع السحابي فقط">
