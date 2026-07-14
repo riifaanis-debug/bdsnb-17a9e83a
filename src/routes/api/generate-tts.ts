@@ -81,6 +81,7 @@ function extractGatewayMessage(raw: string) {
 async function synthesizeSpeechPcm(params: {
   text: string;
   voice?: string;
+  role?: string;
   instructions: string;
 }): Promise<Buffer> {
   const key = process.env.LOVABLE_API_KEY;
