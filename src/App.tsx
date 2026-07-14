@@ -500,7 +500,7 @@ export default function App() {
       stopLocalSpeaking();
       
       setAudioUrl(url);
-      const fname = isFullScript ? `الحلقة_الكاملة_بودكاست_القطاع_${Date.now()}.mp3` : `حلقة_بودكاست_كاملة_${Date.now()}.mp3`;
+      const fname = isFullScript ? `الحلقة_الكاملة_بودكاست_القطاع_${Date.now()}.wav` : `حلقة_بودكاست_كاملة_${Date.now()}.wav`;
       setAudioName(fname);
       setIsPlaying(false);
 
