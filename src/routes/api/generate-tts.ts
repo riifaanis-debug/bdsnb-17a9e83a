@@ -12,14 +12,16 @@ function extractGatewayMessage(raw: string) {
   }
 }
 
+const QAF_RULE = `\n\nCRITICAL PRONUNCIATION RULE (MANDATORY): Pronounce every Arabic letter ق (qaf) as the Saudi colloquial hard "g" sound (like گ / English "g" in "go"), NEVER as the classical Fusha qaf. Examples: قال→gaal, قلت→gult, وقت→wagt, حقك→haggak, صدق→sidg, فوق→foog, تحقيق→tahgeeg, وثيقة→watheega, حقوق→hgoog. Apply to EVERY word containing ق without exception. Any classical qaf is a production error.`;
+
 function getPrompt(text: string, role?: string) {
   if (role === "host") {
-    return `Read the following text aloud in natural Saudi colloquial Arabic as a mature Saudi man (المذيع). Pronounce the speaker label clearly if present. Do not add any introduction or commentary.\n\n${text}`;
+    return `Read the following text aloud in natural Saudi colloquial Arabic as a mature Saudi man (المذيع). Pronounce the speaker label clearly if present. Do not add any introduction or commentary.${QAF_RULE}\n\n${text}`;
   }
   if (role === "collector") {
-    return `Read the following text aloud in natural Saudi colloquial Arabic as a young Saudi man in his twenties (المحصّل). Vary tone naturally: raise energy for warnings or strong statements, lower for details. Pronounce the speaker label clearly if present. Do not add any introduction or commentary.\n\n${text}`;
+    return `Read the following text aloud in natural Saudi colloquial Arabic as a young Saudi man in his twenties (المحصّل). Vary tone naturally: raise energy for warnings or strong statements, lower for details. Pronounce the speaker label clearly if present. Do not add any introduction or commentary.${QAF_RULE}\n\n${text}`;
   }
-  return `Read the following text aloud in natural Saudi colloquial Arabic. Do not add any introduction or commentary.\n\n${text}`;
+  return `Read the following text aloud in natural Saudi colloquial Arabic. Do not add any introduction or commentary.${QAF_RULE}\n\n${text}`;
 }
 
 async function synthesizeSpeechWav(params: {
