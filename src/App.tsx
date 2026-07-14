@@ -367,7 +367,7 @@ export default function App() {
     stopLocalSpeaking();
     if (signedUrl) {
       setAudioUrl(signedUrl);
-      setAudioName(f.name.endsWith(".mp3") ? f.name : `${f.name}.mp3`);
+      setAudioName(f.name.match(/\.(wav|mp3|ogg)$/i) ? f.name : `${f.name}.wav`);
       setIsPlaying(false);
       setTimeout(() => {
         if (audioRef.current) {
