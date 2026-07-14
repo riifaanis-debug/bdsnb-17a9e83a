@@ -329,10 +329,10 @@ export default function App() {
     try {
       let audio_path: string | null = null;
       if (params.audioBlob) {
-        const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.mp3`;
+        const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.wav`;
         const { error: upErr } = await supabase.storage
           .from("generated-audio")
-          .upload(path, params.audioBlob, { contentType: "audio/mpeg", upsert: false });
+          .upload(path, params.audioBlob, { contentType: "audio/wav", upsert: false });
         if (!upErr) audio_path = path;
         else console.warn("Audio upload failed:", upErr.message);
       }
