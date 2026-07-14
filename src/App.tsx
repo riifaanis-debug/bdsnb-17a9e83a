@@ -232,7 +232,7 @@ export default function App() {
       stopLocalSpeaking();
       
       setAudioUrl(url);
-      const fname = `${role === "host" ? "مذيع" : "محصل"}_بودكاست_${Date.now()}.mp3`;
+      const fname = `${role === "host" ? "مذيع" : "محصل"}_بودكاست_${Date.now()}.wav`;
       setAudioName(fname);
       setIsPlaying(false);
 
