@@ -9,13 +9,13 @@ export default function App() {
   const [hostText, setHostText] = useState(SAMPLE_SCRIPTS[1].hostText);
   const [collectorText, setCollectorText] = useState(SAMPLE_SCRIPTS[1].collectorText);
   
-  // Voice selection states
+  // Voice selection states (fixed defaults, no user selection)
   const [hostVoice, setHostVoice] = useState("Charon");
-  const [collectorVoice, setCollectorVoice] = useState("Fenrir");
-  
+  const [collectorVoice, setCollectorVoice] = useState("Achird");
+
   // Playback and UI state
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [audioName, setAudioName] = useState<string>("حلقة_بودكاست_القطاع.mp3");
+  const [audioName, setAudioName] = useState<string>("حلقة_بودكاست_القطاع.wav");
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
