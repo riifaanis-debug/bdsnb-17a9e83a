@@ -1068,38 +1068,15 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* Voice Selection */}
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label className="text-[10px] text-slate-400 mb-1 font-bold">نبرة صوت المذيع:</label>
-                    <div className="flex gap-1.5">
-                      <select
-                        id="host-voice-select"
-                        value={hostVoice}
-                        onChange={(e) => setHostVoice(e.target.value)}
-                        className="flex-1 min-w-0 bg-slate-950 border border-slate-800 rounded-lg px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs text-slate-200 focus:outline-none focus:border-indigo-500 cursor-pointer"
-                      >
-                        {VOICE_OPTIONS.map((v) => (
-                          <option key={v.value} value={v.value}>
-                            {v.label} ({v.gender === "male" ? "رجالي" : "نسائي"})
-                          </option>
-                        ))}
-                      </select>
-                      <button
-                        type="button"
-                        onClick={() => previewVoice(hostVoice, "host")}
-                        disabled={previewingVoice === hostVoice}
-                        title="معاينة الصوت"
-                        className="shrink-0 px-2 py-1.5 bg-indigo-600/20 hover:bg-indigo-600/40 border border-indigo-500/40 rounded-lg text-indigo-200 disabled:opacity-60 cursor-pointer"
-                      >
-                        {previewingVoice === hostVoice ? <Activity className="w-3.5 h-3.5 animate-pulse" /> : <Play className="w-3.5 h-3.5" />}
-                      </button>
-                    </div>
+                  {/* Fixed voice info */}
+                  <div className="text-[10px] sm:text-[11px] text-indigo-300/80 font-bold bg-indigo-950/30 border border-indigo-900/40 rounded-lg px-2.5 py-1.5">
+                    صوت رجالي سعودي طبيعي • ثابت
                   </div>
                 </div>
 
                 {/* Informative description */}
                 <p className="text-[11px] sm:text-xs text-slate-400 mb-2 sm:mb-3 leading-relaxed">
-                  {VOICE_OPTIONS.find(v => v.value === hostVoice)?.description}
+                  نبرة مذيع سعودي واثقة وطبيعية، بلهجة عامية بسيطة كأنها مكالمة هاتفية حقيقية.
                 </p>
 
                 {/* Text Input area */}
