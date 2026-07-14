@@ -927,61 +927,19 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Voice selectors for both characters */}
+              {/* Fixed voices info */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                 <div className="bg-slate-950/50 border border-indigo-900/40 rounded-xl p-2.5 sm:p-3">
-                  <label className="text-[10px] sm:text-[11px] text-indigo-300 font-black block mb-1.5 flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-indigo-300 font-black mb-1">
                     <Mic className="w-3 h-3" /> صوت المذيع
-                  </label>
-                  <div className="flex gap-1.5">
-                    <select
-                      id="full-host-voice"
-                      value={hostVoice}
-                      onChange={(e) => setHostVoice(e.target.value)}
-                      className="flex-1 min-w-0 bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-[11px] sm:text-xs text-slate-100 focus:outline-none focus:border-indigo-500 cursor-pointer"
-                    >
-                      {VOICE_OPTIONS.map((v) => (
-                        <option key={v.value} value={v.value}>{v.label} ({v.gender === "male" ? "رجالي" : "نسائي"})</option>
-                      ))}
-                    </select>
-                    <button
-                      type="button"
-                      onClick={() => previewVoice(hostVoice, "host")}
-                      disabled={previewingVoice === hostVoice}
-                      title="معاينة الصوت"
-                      className="shrink-0 px-2 py-1.5 bg-indigo-600/20 hover:bg-indigo-600/40 border border-indigo-500/40 rounded-lg text-indigo-200 disabled:opacity-60 cursor-pointer"
-                    >
-                      {previewingVoice === hostVoice ? <Activity className="w-3.5 h-3.5 animate-pulse" /> : <Play className="w-3.5 h-3.5" />}
-                    </button>
                   </div>
-                  <p className="text-[10px] text-slate-500 mt-1 line-clamp-2">{VOICE_OPTIONS.find(v => v.value === hostVoice)?.description}</p>
+                  <p className="text-[10px] sm:text-[11px] text-slate-400 leading-relaxed">صوت رجالي سعودي طبيعي بنبرة مذيع واثقة.</p>
                 </div>
                 <div className="bg-slate-950/50 border border-amber-900/40 rounded-xl p-2.5 sm:p-3">
-                  <label className="text-[10px] sm:text-[11px] text-amber-300 font-black block mb-1.5 flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-amber-300 font-black mb-1">
                     <User className="w-3 h-3" /> صوت المحصّل
-                  </label>
-                  <div className="flex gap-1.5">
-                    <select
-                      id="full-collector-voice"
-                      value={collectorVoice}
-                      onChange={(e) => setCollectorVoice(e.target.value)}
-                      className="flex-1 min-w-0 bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-[11px] sm:text-xs text-slate-100 focus:outline-none focus:border-amber-500 cursor-pointer"
-                    >
-                      {VOICE_OPTIONS.map((v) => (
-                        <option key={v.value} value={v.value}>{v.label} ({v.gender === "male" ? "رجالي" : "نسائي"})</option>
-                      ))}
-                    </select>
-                    <button
-                      type="button"
-                      onClick={() => previewVoice(collectorVoice, "collector")}
-                      disabled={previewingVoice === collectorVoice}
-                      title="معاينة الصوت"
-                      className="shrink-0 px-2 py-1.5 bg-amber-600/20 hover:bg-amber-600/40 border border-amber-500/40 rounded-lg text-amber-200 disabled:opacity-60 cursor-pointer"
-                    >
-                      {previewingVoice === collectorVoice ? <Activity className="w-3.5 h-3.5 animate-pulse" /> : <Play className="w-3.5 h-3.5" />}
-                    </button>
                   </div>
-                  <p className="text-[10px] text-slate-500 mt-1 line-clamp-2">{VOICE_OPTIONS.find(v => v.value === collectorVoice)?.description}</p>
+                  <p className="text-[10px] sm:text-[11px] text-slate-400 leading-relaxed">شاب سعودي في العشرينات بلهجة عامية سعودية بسيطة وطبيعية.</p>
                 </div>
               </div>
             </div>
