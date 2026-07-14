@@ -99,7 +99,8 @@ async function synthesizeSpeechPcm(params: {
     body: JSON.stringify({
       model: "openai/gpt-4o-mini-tts",
       input: params.text,
-      voice: mapVoice(params.voice),
+      // الأصوات ثابتة: المذيع رجالي ناضج، والمحصّل شاب سعودي في العشرينات
+      voice: (params as any).role === "collector" ? "ash" : "onyx",
       instructions: params.instructions,
       response_format: "pcm",
     }),
