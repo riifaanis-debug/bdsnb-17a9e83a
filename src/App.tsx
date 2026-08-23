@@ -8,10 +8,12 @@ export default function App() {
   // Input states
   const [hostText, setHostText] = useState(SAMPLE_SCRIPTS[1].hostText);
   const [collectorText, setCollectorText] = useState(SAMPLE_SCRIPTS[1].collectorText);
-  
+  const [youthText, setYouthText] = useState("");
+
   // Voice selection states (fixed defaults, no user selection)
   const [hostVoice, setHostVoice] = useState("Charon");
   const [collectorVoice, setCollectorVoice] = useState("Achird");
+  const youthVoice = "Enceladus";
 
   // Playback and UI state
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
