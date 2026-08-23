@@ -246,9 +246,9 @@ export default function App() {
         engine: "cloud",
         audioBlob: blob,
         hostText: role === "host" ? text : undefined,
-        collectorText: role === "collector" ? text : undefined,
+        collectorText: role !== "host" ? text : undefined,
         hostVoice: role === "host" ? voice : undefined,
-        collectorVoice: role === "collector" ? voice : undefined,
+        collectorVoice: role !== "host" ? voice : undefined,
       });
 
       // Auto-play the newly generated audio
