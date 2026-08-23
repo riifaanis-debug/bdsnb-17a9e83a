@@ -16,15 +16,15 @@ const QAF_RULE = `\n\nCRITICAL PRONUNCIATION RULE (MANDATORY): Pronounce every A
 
 function getPrompt(text: string, role?: string) {
   if (role === "host") {
-    return `Read the following text aloud in natural Saudi colloquial Arabic as a mature Saudi man (المذيع). Pronounce the speaker label clearly if present. Do not add any introduction or commentary.${QAF_RULE}\n\n${text}`;
+    return `Read the following text aloud in warm, lively Saudi colloquial Arabic as a friendly Saudi man in his early thirties (المذيع). Deliver it with a warm smile in your voice, genuine charm, and a playful, joking energy as if talking to a close friend. Laugh softly where the mood feels light, vary your tone with curiosity and delight, and keep the rhythm natural and conversational. Pronounce the speaker label clearly if present. Do not add any introduction or commentary.${QAF_RULE}\n\n${text}`;
   }
   if (role === "collector") {
-    return `Read the following text aloud in natural Saudi colloquial Arabic as a young Saudi man in his twenties (المحصّل). Vary tone naturally: raise energy for warnings or strong statements, lower for details. Pronounce the speaker label clearly if present. Do not add any introduction or commentary.${QAF_RULE}\n\n${text}`;
+    return `Read the following text aloud in warm, lively Saudi colloquial Arabic as a young Saudi man in his twenties (المحصّل). Be playful, confident, and full of character — joke, tease, and laugh naturally as if face-to-face with a good friend. Vary your tone: raise energy with a sharp, joking edge for warnings or strong statements; soften with a smile and a short laugh for lighter moments. Use natural pauses and breaths. Pronounce the speaker label clearly if present. Do not add any introduction or commentary.${QAF_RULE}\n\n${text}`;
   }
   if (role === "youth") {
-    return `Read the following text aloud in simple natural Saudi colloquial Arabic (لهجة سعودية عامية بسيطة). You are a shy, polite young Saudi man, 19-20 years old. Voice qualities (MANDATORY): soft, gentle and warm; light youthful timbre; friendly and a bit bashful (فيه حياء وأدب); calm relaxed pace, slightly slower than normal; low-to-medium volume; a subtle smile in the voice; natural short breaths and small pauses between sentences. Never sound aggressive, loud, dramatic, formal, or like a news anchor. Do not add any introduction or commentary — speak the text only.${QAF_RULE}\n\n${text}`;
+    return `Read the following text aloud in warm, simple natural Saudi colloquial Arabic (لهجة سعودية عامية بسيطة). You are a shy, polite young Saudi man, 19-20 years old, with a soft, gentle, warm voice and a friendly, bashful smile. Light, happy laughter is fine where the text feels playful. Keep a calm, relaxed pace, slightly slower than normal; low-to-medium volume; natural short breaths and small pauses between sentences. Never sound aggressive, loud, dramatic, formal, or like a news anchor. Do not add any introduction or commentary — speak the text only.${QAF_RULE}\n\n${text}`;
   }
-  return `Read the following text aloud in natural Saudi colloquial Arabic. Do not add any introduction or commentary.${QAF_RULE}\n\n${text}`;
+  return `Read the following text aloud in warm, lively Saudi colloquial Arabic. Deliver it with a friendly smile in your voice and a playful, joking tone as if chatting with a close friend. Laugh naturally where the mood is light, vary your tone, and keep the rhythm conversational. Do not add any introduction or commentary.${QAF_RULE}\n\n${text}`;
 }
 
 async function synthesizeSpeechWav(params: {
