@@ -80,12 +80,12 @@ ${text}`;
   }
 
   if (role === "host") {
-    return `Read the following transcript aloud in natural Saudi colloquial Arabic. You are the host (المذيع): a mature Saudi man with a calm, natural male voice. Pronounce the speaker label clearly at the start, then continue naturally. Do not add any introduction, commentary, or extra words. Keep the rhythm of a real phone call.${qafRule}
+    return `Read the following transcript aloud in warm, lively Saudi colloquial Arabic. You are the host (المذيع): a friendly, naturally charming Saudi man in his early thirties. Deliver every line with a warm smile in your voice, genuine friendliness, and a playful sense of humor as if you are joking with a close friend. Laugh softly where the text feels light or funny, let your tone rise and fall with curiosity and delight, and use relaxed, conversational pacing. Do not be monotone or robotic. Pronounce the speaker label clearly at the start, then continue naturally. Do not add any introduction, commentary, or extra words.${qafRule}
 
 Transcript:\n${text}`;
   }
 
-  return `Read the following transcript aloud in natural Saudi colloquial Arabic. You are the collector (المحصّل): a young Saudi man in his twenties with a confident, street-level Saudi voice. Vary your tone: raise pitch and volume for warnings, threats, oaths and strong statements; lower for details; add short sharp pauses and natural breaths where needed. Pronounce the speaker label clearly at the start, then continue naturally. Do not add any introduction, commentary, or extra words.${qafRule}
+  return `Read the following transcript aloud in warm, lively Saudi colloquial Arabic. You are the collector (المحصّل): a young Saudi man in his twenties with a confident, playful, street-level Saudi personality. Let your voice be warm, charming, and full of character — joke, tease, and laugh naturally as if you are talking face-to-face with a good friend. Vary your tone: raise energy and add a sharp, joking edge for warnings or strong statements; soften with a smile and a short laugh for lighter moments. Use natural pauses, audible breaths, and playful rhythm. Do not be monotone or robotic. Pronounce the speaker label clearly at the start, then continue naturally. Do not add any introduction, commentary, or extra words.${qafRule}
 
 Transcript:\n${text}`;
 }
