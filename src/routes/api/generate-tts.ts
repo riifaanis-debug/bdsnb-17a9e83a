@@ -96,7 +96,8 @@ export const Route = createFileRoute("/api/generate-tts")({
           }
 
           const voiceName =
-            voice || (role === "collector" ? "Achird" : "Charon");
+            voice ||
+            (role === "collector" ? "Achird" : role === "youth" ? "Enceladus" : "Charon");
 
           const wav = await synthesizeSpeechWav({
             text: String(text),
