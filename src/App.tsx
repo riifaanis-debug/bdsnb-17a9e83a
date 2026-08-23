@@ -222,7 +222,7 @@ export default function App() {
         if (errMessage.includes("quota") || errMessage.includes("limit") || response.status === 429) {
           triggerAutoFallback();
           // Attempt immediate playback via fallback
-          playLocalSingle(text, voice, role);
+          playLocalSingle(text, voice, role === "youth" ? "collector" : role);
           return;
         }
         throw new Error(errMessage || "فشل توليد الصوت من الخادم.");
