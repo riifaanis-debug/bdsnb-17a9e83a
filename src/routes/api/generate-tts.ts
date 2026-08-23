@@ -21,6 +21,9 @@ function getPrompt(text: string, role?: string) {
   if (role === "collector") {
     return `Read the following text aloud in natural Saudi colloquial Arabic as a young Saudi man in his twenties (المحصّل). Vary tone naturally: raise energy for warnings or strong statements, lower for details. Pronounce the speaker label clearly if present. Do not add any introduction or commentary.${QAF_RULE}\n\n${text}`;
   }
+  if (role === "youth") {
+    return `Read the following text aloud in simple natural Saudi colloquial Arabic (لهجة سعودية عامية بسيطة). You are a shy, polite young Saudi man, 19-20 years old. Voice qualities (MANDATORY): soft, gentle and warm; light youthful timbre; friendly and a bit bashful (فيه حياء وأدب); calm relaxed pace, slightly slower than normal; low-to-medium volume; a subtle smile in the voice; natural short breaths and small pauses between sentences. Never sound aggressive, loud, dramatic, formal, or like a news anchor. Do not add any introduction or commentary — speak the text only.${QAF_RULE}\n\n${text}`;
+  }
   return `Read the following text aloud in natural Saudi colloquial Arabic. Do not add any introduction or commentary.${QAF_RULE}\n\n${text}`;
 }
 
@@ -93,7 +96,8 @@ export const Route = createFileRoute("/api/generate-tts")({
           }
 
           const voiceName =
-            voice || (role === "collector" ? "Achird" : "Charon");
+            voice ||
+            (role === "collector" ? "Achird" : role === "youth" ? "Enceladus" : "Charon");
 
           const wav = await synthesizeSpeechWav({
             text: String(text),
