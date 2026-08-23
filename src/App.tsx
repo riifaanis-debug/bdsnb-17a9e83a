@@ -204,7 +204,7 @@ export default function App() {
 
     try {
       setIsLoading(true);
-      setLoadingMessage(`جاري توليد صوت ${role === "host" ? "المذيع" : "المحصل"} بنبرة ${voiceLabel}...`);
+      setLoadingMessage(`جاري توليد صوت ${roleLabelAr} بنبرة ${voiceLabel}...`);
       
       const response = await fetch("/api/generate-tts", {
         method: "POST",
