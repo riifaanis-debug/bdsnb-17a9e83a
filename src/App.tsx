@@ -1165,8 +1165,12 @@ export default function App() {
               </div>
             </section>
 
+
+          </div>
+        )}
+
             {/* Section 3: Young Saudi soft voice (شاب سعودي) */}
-            <section className="flex flex-col gap-4 lg:col-span-2" id="section-youth">
+            <section className="flex flex-col gap-4 " id="section-youth">
               <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-3 sm:p-6 flex flex-col h-full shadow-lg relative">
 
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-3 sm:mb-4 pb-3 sm:pb-4 border-b border-slate-800/80">
@@ -1214,9 +1218,6 @@ export default function App() {
                 </button>
               </div>
             </section>
-
-          </div>
-        )}
 
 
         {/* Quick Help Guide */}
