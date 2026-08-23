@@ -1165,6 +1165,56 @@ export default function App() {
               </div>
             </section>
 
+            {/* Section 3: Young Saudi soft voice (شاب سعودي) */}
+            <section className="flex flex-col gap-4 lg:col-span-2" id="section-youth">
+              <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-3 sm:p-6 flex flex-col h-full shadow-lg relative">
+
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-3 sm:mb-4 pb-3 sm:pb-4 border-b border-slate-800/80">
+                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                    <div className="w-9 h-9 sm:w-12 sm:h-12 shrink-0 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/30">
+                      <User className="w-4 h-4 sm:w-6 sm:h-6 text-emerald-400" />
+                    </div>
+                    <div className="min-w-0">
+                      <h2 className="font-bold text-slate-100 text-sm sm:text-lg">نص الشاب السعودي</h2>
+                      <p className="text-[10px] sm:text-xs text-emerald-400 font-bold uppercase tracking-wider truncate">صوت ناعم وودود • 19–20 سنة</p>
+                    </div>
+                  </div>
+
+                  <div className="text-[10px] sm:text-[11px] text-emerald-300/80 font-bold bg-emerald-950/20 border border-emerald-900/40 rounded-lg px-2.5 py-1.5">
+                    لهجة سعودية عامية • نبرة حياء وهدوء
+                  </div>
+                </div>
+
+                <p className="text-[11px] sm:text-xs text-slate-400 mb-2 sm:mb-3 leading-relaxed">
+                  صوت شاب سعودي في التاسعة عشرة أو العشرين، لهجة عامية بسيطة، نبرة ناعمة ودودة فيها حياء وأدب وابتسامة خفيفة.
+                </p>
+
+                <div className="flex-grow flex flex-col">
+                  <textarea
+                    id="youth-textarea"
+                    value={youthText}
+                    onChange={(e) => setYouthText(e.target.value)}
+                    className="flex-grow w-full bg-slate-950/50 border border-slate-800/80 rounded-xl p-3 sm:p-4 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-emerald-500/50 resize-none transition-colors min-h-[140px] sm:min-h-[160px] text-[13px] sm:text-sm leading-relaxed"
+                    placeholder="اكتب هنا النص الذي تبي الشاب السعودي يقوله بلهجة عامية وصوت ناعم..."
+                  ></textarea>
+                  <div className="flex justify-between text-[10px] sm:text-[11px] text-slate-500 mt-2 gap-2">
+                    <span className="truncate">علامات الترقيم تضيف وقفات طبيعية</span>
+                    <span className="shrink-0">{youthText.length} حرفاً</span>
+                  </div>
+                </div>
+
+                <button
+                  id="btn-play-youth"
+                  disabled={isLoading}
+                  onClick={() => generateSingleSpeaker("youth")}
+                  className="mt-3 sm:mt-4 w-full py-2.5 sm:py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/10 active:scale-[0.98] cursor-pointer text-xs sm:text-sm"
+                >
+                  <Volume2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                  توليد صوت الشاب السعودي {voiceEngine === "browser" && "(محلياً)"}
+                </button>
+              </div>
+            </section>
+
           </div>
         )}
 
