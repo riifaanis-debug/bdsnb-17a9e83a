@@ -184,20 +184,21 @@ export default function App() {
   };
 
   // Generate TTS for single speaker
-  const generateSingleSpeaker = async (role: "host" | "collector") => {
+  const generateSingleSpeaker = async (role: "host" | "collector" | "youth") => {
     setError(null);
-    const text = role === "host" ? hostText : collectorText;
-    const voice = role === "host" ? hostVoice : collectorVoice;
+    const roleLabelAr = role === "host" ? "المذيع" : role === "collector" ? "المحصل" : "الشاب السعودي";
+    const text = role === "host" ? hostText : role === "collector" ? collectorText : youthText;
+    const voice = role === "host" ? hostVoice : role === "collector" ? collectorVoice : youthVoice;
     const voiceLabel = VOICE_OPTIONS.find(v => v.value === voice)?.label || voice;
-    
+
     if (!text.trim()) {
-      setError(`الرجاء إدخال نص لبطاقة ${role === "host" ? "المذيع" : "المحصل"} أولاً.`);
+      setError(`الرجاء إدخال نص لبطاقة ${roleLabelAr} أولاً.`);
       return;
     }
 
     // If local browser voice is selected
     if (voiceEngine === "browser") {
-      playLocalSingle(text, voice, role);
+      playLocalSingle(text, voice, role === "youth" ? "collector" : role);
       return;
     }
 
