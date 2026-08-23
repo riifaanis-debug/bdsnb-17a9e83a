@@ -235,7 +235,7 @@ export default function App() {
       stopLocalSpeaking();
       
       setAudioUrl(url);
-      const fname = `${role === "host" ? "مذيع" : "محصل"}_بودكاست_${Date.now()}.wav`;
+      const fname = `${role === "host" ? "مذيع" : role === "collector" ? "محصل" : "شاب_سعودي"}_${Date.now()}.wav`;
       setAudioName(fname);
       setIsPlaying(false);
 
